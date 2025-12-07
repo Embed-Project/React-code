@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 
-const calculateLuxFromPercent = (raw) => {
-  const rawAdc = raw;
-  const VIN = 3.3; 
-  const vOut = (rawAdc / 4095) * VIN;
-  if (vOut <= 0.1) return 0; 
-  const R_FIXED = 10000; 
-  const rLdr = (VIN * R_FIXED / vOut) - R_FIXED;
-  const lux = 500 / (rLdr / 1000); 
-  return Math.round(lux );
-};
+const calculateLuxFromAdc = (rawAdc) => {
+    // 1. Safety Check: If ADC is 0, Voltage is 0, Division by Zero error occurs below.
+    // ADC < 10 is effectively pitch black.
+    if (rawAdc < 10) return 0; 
+  
+    const VIN = 3.3;     // STM32 works on 3.3V
+    const R_FIXED = 10000; // Your module has a 10k resistor (10,000 ohms)
+    const vOut = (rawAdc / 4095) * VIN;
+    const rLdr = (VIN * R_FIXED / vOut) - R_FIXED;
+    const lux = 500 / (rLdr / 1000); 
+  
+    return Math.round(lux);
+  };
 
 const getSensorState = (type, value) => {
     let label = "Unknown";
@@ -81,7 +84,7 @@ const SensorDashboard = () => {
       setData({
         temp: json.data.Temperature,
         humid: json.data.Humidity,
-        light: json.data.Lightness,
+        light: json.data.light,
         soil: json.data["Soil Moisture"],
         lastSeen: new Date().toLocaleTimeString()
       });
@@ -96,7 +99,7 @@ const SensorDashboard = () => {
   const stTemp = getSensorState("temp", data.temp);
   const stHumid = getSensorState("humid", data.humid);
   const stSoil = getSensorState("soil", data.soil);
-  const stLight = getSensorState("light", calculateLuxFromPercent(data.light));
+  const stLight = getSensorState("light", calculateLuxFromAdc(data.light));
 
   return (
     <div className="min-h-screen bg-gray-50 p-8 font-sans">
@@ -134,7 +137,7 @@ const SensorDashboard = () => {
         {/* LIGHT CARD */}
         <div className={`p-6 rounded-xl shadow-sm border ${stLight.bgColor} border-transparent`}>
             <p className="text-sm font-bold text-gray-500 uppercase">Light</p>
-            <h2 className="text-4xl font-bold text-gray-800">{calculateLuxFromPercent(data.light)} LUX</h2>
+            <h2 className="text-4xl font-bold text-gray-800">{calculateLuxFromAdc(data.light)} LUX</h2>
             <div className="flex flex-col">
               <p className={`text-sm font-bold mt-1 ${stLight.color}`}>{stLight.label}</p>
             </div>
