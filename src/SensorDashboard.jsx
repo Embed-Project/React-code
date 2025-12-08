@@ -39,16 +39,17 @@ const getSensorState = (type, value) => {
     else { label = "⚠️ Too Humid"; color = "text-cyan-700"; bgColor = "bg-cyan-100"; }
   } 
   else if (type === "soil") {
-    if (value < 20) { label = "⚠️ Bone Dry"; color = "text-red-700"; bgColor = "bg-red-200"; }
-    else if (value < 40) { label = "⚠️ Dry"; color = "text-orange-600"; bgColor = "bg-orange-100"; }
-    else if (value < 70) { label = "✅ Moist"; color = "text-green-600"; bgColor = "bg-green-100"; }
-    else { label = "Wet"; color = "text-blue-600"; bgColor = "bg-blue-100"; }
+    if (value < 20) { label = "⚠️ Too Dry"; color = "text-red-700"; bgColor = "bg-red-200"; }
+    else if (value < 40) { label = "Dry"; color = "text-orange-600"; bgColor = "bg-orange-100"; }
+    else if (value < 60) { label = "✅ Moist"; color = "text-green-600"; bgColor = "bg-green-100"; }
+    else if(value < 80) { label = "✅ Wet"; color = "text-blue-600"; bgColor = "bg-blue-100"; }
+    else { label = "⚠️ Waterlogged"; color = "text-purple-600"; bgColor = "bg-purple-100"; }
   } 
   else if (type === "light") {
     if (value < 200) { label = "⚠️ Too Dark"; color = "text-gray-600"; bgColor = "bg-gray-200"; }
     else if (value < 800) { label = "Low Light"; color = "text-orange-600"; bgColor = "bg-orange-100"; }
-    else if (value < 1600) { label = "Medium Light"; color = "text-yellow-600"; bgColor = "bg-yellow-100"; }
-    else { label = "✅ High Light"; color = "text-green-600"; bgColor = "bg-green-100"; }
+    else if (value < 1600) { label = "Medium Light"; color = "text-green-100"; bgColor = "bg-yellow-100"; }
+    else { label = "✅ High Light"; color = "text-green-600"; bgColor = "bg-green-200"; }
   }
 
   return { label, color, bgColor };
